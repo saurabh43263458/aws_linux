@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Complex Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 250px;
+      background: #1a1a2e;
+      color: #fff;
+      padding: 20px;
+    }
+    .sidebar h2 { margin-top: 0; }
+    .sidebar a {
+      display: block;
+      color: #ccc;
+      text-decoration: none;
+      margin: 10px 0;
+    }
+    .sidebar a:hover { color: #fff; }
+
+    .content {
+      flex-grow: 1;
+      background: #f0f2f5;
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    canvas { max-width: 100%; height: 300px; }
+
+    table {
+      width: 100%;
+      background: white;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background: #ddd;
+      cursor: pointer;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      width: 400px;
+      text-align: center;
+    }
+
+    .modal.show { display: flex; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="sidebar">
+      <h2>My Admin</h2>
+      <a href="#">Dashboard</a>
+      <a href="#">Users</a>
+      <a href="#">Settings</a>
+      <a href="#" onclick="showModal()">Help</a>
+    </div>
+    <div class="content">
+      <div class="header">
+        <h1>Dashboard Overview</h1>
+        <button onclick="showModal()">Open Modal</button>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Users</h3>
+          <p>1,024</p>
+        </div>
+        <div class="card">
+          <h3>Revenue</h3>
+          <p>$12,340</p>
+        </div>
+        <div class="card">
+          <h3>Orders</h3>
+          <p>498</p>
+        </div>
+        <div class="card">
+          <h3>Feedback</h3>
+          <p>82%</p>
+        </div>
+      </div>
+
+      <canvas id="myChart"></canvas>
+
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortTable(0)">Name</th>
+            <th onclick="sortTable(1)">Email</th>
+            <th onclick="sortTable(2)">Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Alice</td><td>alice@example.com</td><td>Admin</td></tr>
+          <tr><td>Bob</td><td>bob@example.com</td><td>User</td></tr>
+          <tr><td>Charlie</td><td>charlie@example.com</td><td>Manager</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h2>Support</h2>
+      <p>This is a modal window with some help info.</p>
+      <button onclick="hideModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Users', 'Orders', 'Revenue', 'Feedback'],
+        datasets: [{
+          label: 'Statistics',
+          data: [1024, 498, 12340, 82],
+          backgroundColor: ['#1abc9c', '#3498db', '#9b59b6', '#e67e22']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+
+    function sortTable(n) {
+      const table = document.querySelector("table tbody");
+      const rows = Array.from(table.rows);
+      const asc = table.asc = !table.asc;
+      rows.sort((rowA, rowB) => {
+        const cellA = rowA.cells[n].textContent;
+        const cellB = rowB.cells[n].textContent;
+        return asc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+      });
+      rows.forEach(row => table.appendChild(row));
+    }
+
+    function showModal() {
+      document.getElementById('modal').classList.add('show');
+    }
+
+    function hideModal() {
+      document.getElementById('modal').classList.remove('show');
+    }
+  </script>
+</body>
+</html>
